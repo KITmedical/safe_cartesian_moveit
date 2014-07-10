@@ -103,16 +103,18 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-# add_executable(safe_cartesian_moveit_node src/safe_cartesian_moveit_node.cpp)
+add_executable(safe_cartesian_moveit_test
+  src/test.cpp
+)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(safe_cartesian_moveit_node safe_cartesian_moveit_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(safe_cartesian_moveit_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(safe_cartesian_moveit_test
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
