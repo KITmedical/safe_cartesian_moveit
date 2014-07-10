@@ -45,6 +45,7 @@ int main(int argc, char **argv)
 
 
   /* TODO
+   * PlanningScene -> planning_scene_monitor::PlanningSceneMonitor; robot_model_loader -> getRobotModel()
    * current_state.setJointPositions()
    * planning_scene.checkCollision()
    */
