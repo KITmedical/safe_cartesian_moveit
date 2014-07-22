@@ -44,7 +44,6 @@ class CollisionCheckMoveIt
 
     // variables
     planning_scene_monitor::PlanningSceneMonitorPtr m_planning_scene_monitor;
-    planning_scene_monitor::LockedPlanningSceneRO m_locked_planning_scene;
     std::map<std::string,std::string> m_joint_names_map;
 
 

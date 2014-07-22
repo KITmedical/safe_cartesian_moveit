@@ -10,12 +10,8 @@
 
 
 /*---------------------------------- public: -----------------------------{{{-*/
-// TODO robot_description vs composite-robot_description
-// remap as in joint_topic_merger.py
-// use a map, fill it ONCE in some init function
 CollisionCheckMoveIt::CollisionCheckMoveIt()
-  :m_planning_scene_monitor(new planning_scene_monitor::PlanningSceneMonitor("robot_description")),
-   m_locked_planning_scene(m_planning_scene_monitor)
+  :m_planning_scene_monitor(new planning_scene_monitor::PlanningSceneMonitor("robot_description"))
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -25,13 +21,17 @@ CollisionCheckMoveIt::CollisionCheckMoveIt()
   }
 
   m_planning_scene_monitor->requestPlanningSceneState();
+  m_planning_scene_monitor->startSceneMonitor();
+  m_planning_scene_monitor->startStateMonitor();
+  m_planning_scene_monitor->startWorldGeometryMonitor();
 }
 
 
 collision_detection::CollisionResult
 CollisionCheckMoveIt::getCollisionResult(const sensor_msgs::JointState& targetJointsState, bool contacts)
 {
-  const robot_state::RobotState& current_state = m_locked_planning_scene->getCurrentState();
+  planning_scene_monitor::LockedPlanningSceneRO locked_planning_scene(m_planning_scene_monitor);
+  const robot_state::RobotState& current_state = locked_planning_scene->getCurrentState();
 
   robot_state::RobotState target_state(current_state);
   for (size_t jointIdx = 0; jointIdx < targetJointsState.name.size(); jointIdx++) {
@@ -50,7 +50,7 @@ CollisionCheckMoveIt::getCollisionResult(const sensor_msgs::JointState& targetJo
   collision_request.contacts = contacts;
   collision_request.max_contacts = 100;
   collision_result.clear();
-  m_locked_planning_scene->checkCollision(collision_request, collision_result, target_state);
+  locked_planning_scene->checkCollision(collision_request, collision_result, target_state);
 
   return collision_result;
 }

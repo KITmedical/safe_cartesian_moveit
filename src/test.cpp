@@ -15,6 +15,7 @@ int main(int argc, char **argv)
 
   planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor(new planning_scene_monitor::PlanningSceneMonitor("robot_description"));
   planning_scene_monitor->requestPlanningSceneState();
+  planning_scene_monitor->startSceneMonitor();
 
   planning_scene_monitor::LockedPlanningSceneRO locked_planning_scene(planning_scene_monitor);
   //robot_model::RobotModelConstPtr robot_model = locked_planning_scene->getRobotModel();
