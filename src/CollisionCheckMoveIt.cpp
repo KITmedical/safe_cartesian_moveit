@@ -8,6 +8,7 @@
 // custom includes
 #include <ahbstring.h>
 
+#define DEBUG_COLLISIONS
 
 /*---------------------------------- public: -----------------------------{{{-*/
 CollisionCheckMoveIt::CollisionCheckMoveIt()
@@ -48,9 +49,23 @@ CollisionCheckMoveIt::getCollisionResult(const sensor_msgs::JointState& targetJo
   collision_detection::CollisionRequest collision_request;
   collision_detection::CollisionResult collision_result;
   collision_request.contacts = contacts;
+#ifdef DEBUG_COLLISIONS
+  collision_request.contacts = true;
+#endif
   collision_request.max_contacts = 100;
   collision_result.clear();
   locked_planning_scene->checkCollision(collision_request, collision_result, target_state);
+
+#ifdef DEBUG_COLLISIONS
+  if (collision_result.collision) {
+    collision_detection::CollisionResult::ContactMap::const_iterator it;
+    for(it = collision_result.contacts.begin();
+        it != collision_result.contacts.end();
+        ++it) {
+      ROS_INFO("Collision between: %s and %s", it->first.first.c_str(), it->first.second.c_str());
+    }
+  }
+#endif
 
   return collision_result;
 }
