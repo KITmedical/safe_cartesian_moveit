@@ -9,7 +9,7 @@
 
 int main(int argc, char **argv)
 {
-  ros::init (argc, argv, "safe_cartesian_moveit_test");
+  ros::init(argc, argv, "safe_cartesian_moveit_test");
   ros::AsyncSpinner spinner(1);
   spinner.start();
 

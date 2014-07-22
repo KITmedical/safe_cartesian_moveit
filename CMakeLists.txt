@@ -80,9 +80,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES safe_cartesian_moveit
-#  CATKIN_DEPENDS moveit_core moveit_ros_planning_interface roscpp
+  INCLUDE_DIRS include
+  LIBRARIES safe_cartesian_moveit
+  CATKIN_DEPENDS moveit_core moveit_ros_planning_interface roscpp
 #  DEPENDS system_lib
 )
 
@@ -90,17 +90,20 @@ catkin_package(
 ## Build ##
 ###########
 
+SET(CMAKE_CXX_FLAGS "-O2 -Wall -Werror")
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-# add_library(safe_cartesian_moveit
-#   src/${PROJECT_NAME}/safe_cartesian_moveit.cpp
-# )
+add_library(safe_cartesian_moveit
+  src/CollisionCheckMoveIt.cpp
+)
 
 ## Declare a cpp executable
 add_executable(safe_cartesian_moveit_test
@@ -112,6 +115,9 @@ add_executable(safe_cartesian_moveit_test
 # add_dependencies(safe_cartesian_moveit_node safe_cartesian_moveit_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
+target_link_libraries(safe_cartesian_moveit
+  ${catkin_LIBRARIES}
+)
 target_link_libraries(safe_cartesian_moveit_test
   ${catkin_LIBRARIES}
 )
@@ -138,11 +144,9 @@ target_link_libraries(safe_cartesian_moveit_test
 # )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
