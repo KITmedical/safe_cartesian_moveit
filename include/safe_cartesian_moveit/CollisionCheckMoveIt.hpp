@@ -35,6 +35,8 @@ class CollisionCheckMoveIt
     // methods
     bool hasCollision(const sensor_msgs::JointState& targetJointsState);
     collision_detection::CollisionResult getCollisionResult(const sensor_msgs::JointState& targetJointsState, bool contacts = false);
+    bool hasPathCollision(const std::vector<sensor_msgs::JointState>& targetJointsStateVector);
+    collision_detection::CollisionResult getPathCollisionResult(const std::vector<sensor_msgs::JointState>& targetJointsStateVector, bool contacts = false);
 
     // variables
 

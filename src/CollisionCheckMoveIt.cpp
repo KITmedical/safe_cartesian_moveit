@@ -34,6 +34,8 @@ CollisionCheckMoveIt::CollisionCheckMoveIt()
 collision_detection::CollisionResult
 CollisionCheckMoveIt::getCollisionResult(const sensor_msgs::JointState& targetJointsState, bool contacts)
 {
+  //ROS_INFO_STREAM("Checking collision for:\n" << targetJointsState);
+
   planning_scene_monitor::LockedPlanningSceneRO locked_planning_scene(m_planning_scene_monitor);
   const robot_state::RobotState& current_state = locked_planning_scene->getCurrentState();
 
@@ -79,6 +81,28 @@ CollisionCheckMoveIt::hasCollision(const sensor_msgs::JointState& targetJointsSt
   collision_detection::CollisionResult collision_result = getCollisionResult(targetJointsState);
   return collision_result.collision;
 }
+
+collision_detection::CollisionResult
+CollisionCheckMoveIt::getPathCollisionResult(const std::vector<sensor_msgs::JointState>& targetJointsStateVector, bool contacts)
+{
+  collision_detection::CollisionResult collision_result;
+  for (std::vector<sensor_msgs::JointState>::const_iterator it = targetJointsStateVector.begin(); it != targetJointsStateVector.end(); ++it) {
+    collision_result = getCollisionResult(*it, contacts);
+    if (collision_result.collision) {
+      return collision_result;
+    }
+  }
+
+  return collision_result;
+}
+
+bool
+CollisionCheckMoveIt::hasPathCollision(const std::vector<sensor_msgs::JointState>& targetJointsStateVector)
+{
+  collision_detection::CollisionResult collision_result = getPathCollisionResult(targetJointsStateVector);
+  return collision_result.collision;
+}
+
 /*------------------------------------------------------------------------}}}-*/
 
 /*--------------------------------- protected: ---------------------------{{{-*/
