@@ -17,14 +17,17 @@ CollisionCheckMoveIt::CollisionCheckMoveIt()
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-  if (ros::param::get("single_to_composite_joints", m_joint_names_map)) {
-    ROS_INFO_STREAM("Using joint mappings: " << ahb::string::toString(m_joint_names_map));
-  }
-
+  while (!ros::service::waitForService("get_planning_scene", ros::Duration(1)))
+    ;
   m_planning_scene_monitor->requestPlanningSceneState();
+
   m_planning_scene_monitor->startSceneMonitor();
   m_planning_scene_monitor->startStateMonitor();
   m_planning_scene_monitor->startWorldGeometryMonitor();
+
+  if (ros::param::get("single_to_composite_joints", m_joint_names_map)) {
+    ROS_INFO_STREAM("Using joint mappings: " << ahb::string::toString(m_joint_names_map));
+  }
 }
 
 
