@@ -49,6 +49,7 @@ CollisionCheckMoveIt::getCollisionResult(const sensor_msgs::JointState& targetJo
     } else {
       joint_name = m_joint_names_map[targetJointsState.name[jointIdx]];
     }
+    // TODO if joint_name is unknown, report error, do not call setJointPositions (== do not crash)
     target_state.setJointPositions(joint_name, &targetJointsState.position[jointIdx]);
   }
   target_state.update();
