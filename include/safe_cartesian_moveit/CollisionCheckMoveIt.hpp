@@ -45,6 +45,7 @@ class CollisionCheckMoveIt
     // methods
 
     // variables
+    ros::NodeHandle m_node;
     planning_scene_monitor::PlanningSceneMonitorPtr m_planning_scene_monitor;
     std::map<std::string,std::string> m_joint_names_map;
 

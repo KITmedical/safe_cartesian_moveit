@@ -25,8 +25,10 @@ CollisionCheckMoveIt::CollisionCheckMoveIt()
   m_planning_scene_monitor->startStateMonitor();
   m_planning_scene_monitor->startWorldGeometryMonitor();
 
-  ROS_INFO("Waiting 3 seconds for joint mappings to become available.");
-  ros::Duration(3).sleep();
+  while (!m_node.hasParam("single_to_composite_joints")) {
+    ROS_INFO("Waiting for joint mappings to become available.");
+    ros::Duration(1).sleep();
+  }
   if (ros::param::get("single_to_composite_joints", m_joint_names_map)) {
     ROS_INFO_STREAM("Using joint mappings: " << ahb::string::toString(m_joint_names_map));
   }
@@ -92,6 +94,9 @@ CollisionCheckMoveIt::getPathCollisionResult(const std::vector<sensor_msgs::Join
   for (std::vector<sensor_msgs::JointState>::const_iterator it = targetJointsStateVector.begin(); it != targetJointsStateVector.end(); ++it) {
     collision_result = getCollisionResult(*it, contacts);
     if (collision_result.collision) {
+#ifdef DEBUG_COLLISIONS
+      ROS_INFO("Collision at %ld of %zd in path.", it - targetJointsStateVector.begin(), targetJointsStateVector.size());
+#endif
       return collision_result;
     }
   }
