@@ -28,6 +28,7 @@ CollisionCheckMoveIt::CollisionCheckMoveIt()
   while (!m_node.hasParam("single_to_composite_joints")) {
     ROS_INFO("Waiting for joint mappings to become available.");
     ros::Duration(1).sleep();
+    ros::spinOnce();
   }
   if (ros::param::get("single_to_composite_joints", m_joint_names_map)) {
     ROS_INFO_STREAM("Using joint mappings: " << ahb::string::toString(m_joint_names_map));
