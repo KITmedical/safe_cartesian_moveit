@@ -43,6 +43,10 @@ CollisionCheckMoveIt::getCollisionResult(const sensor_msgs::JointState& targetJo
 
   planning_scene_monitor::LockedPlanningSceneRO locked_planning_scene(m_planning_scene_monitor);
   const robot_state::RobotState& current_state = locked_planning_scene->getCurrentState();
+  const robot_state::RobotModelConstPtr& robot_model = current_state.getRobotModel();
+  const std::vector<std::string>& robot_joint_names = robot_model->getJointModelNames();
+
+  collision_detection::CollisionResult collision_result;
 
   robot_state::RobotState target_state(current_state);
   for (size_t jointIdx = 0; jointIdx < targetJointsState.name.size(); jointIdx++) {
@@ -52,13 +56,18 @@ CollisionCheckMoveIt::getCollisionResult(const sensor_msgs::JointState& targetJo
     } else {
       joint_name = m_joint_names_map[targetJointsState.name[jointIdx]];
     }
-    // TODO if joint_name is unknown, report error, do not call setJointPositions (== do not crash)
+    // check if joint_name is part of robot_model
+    if (joint_name.size() == 0
+        || std::find(robot_joint_names.begin(), robot_joint_names.end(), joint_name) == robot_joint_names.end()) {
+      ROS_INFO("Invalid joint name: '%s'. Considering this as collision.", joint_name.c_str());
+      collision_result.collision = true;
+      return collision_result;
+    }
     target_state.setJointPositions(joint_name, &targetJointsState.position[jointIdx]);
   }
   target_state.update();
 
   collision_detection::CollisionRequest collision_request;
-  collision_detection::CollisionResult collision_result;
   collision_request.contacts = contacts;
 #ifdef DEBUG_COLLISIONS
   collision_request.contacts = true;
